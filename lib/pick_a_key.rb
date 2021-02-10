@@ -1,8 +1,8 @@
-# frozen_string_literal: true
+require 'nokogiri'
+require 'open-uri'
+require 'pry'
 
-require_relative "pick_a_key/version"
-
-module PickAKey
-  class Error < StandardError; end
-  # Your code goes here...
-end
+require_relative "./pick_a_key/version"
+require_relative './pick_a_key/cli'
+require_relative './pick_a_key/key'
+require_relative './pick_a_key/scraper'
