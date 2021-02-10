@@ -1,3 +1,5 @@
+require './lib/pick_a_key'
+
 class PickAKey::Scraper
 
     def self.scrape_major_key_scale_overview
@@ -51,7 +53,7 @@ class PickAKey::Scraper
         @names
     end
 
-    def self.name_modifyer
+    def self.name_modifier
         self.all_scale_names
         @names[0].map! { |scale| scale.split(" ").join("-").downcase }
         @names[1].map! { |scale| scale.split(" ").join("-").downcase }
@@ -59,50 +61,27 @@ class PickAKey::Scraper
         @names            
     end
 
+
     def self.all_chords_scraper
-        self.name_modifyer
+        self.name_modifier
         @minor_chords = []
         @major_chords = []
         @names.each do |a|
             a.each do |input|
-        if input == "b-flat"
-           b_flat_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-b-flat.html"))
-           b = b_flat_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?(".") || a.include?("ii – V – I") || a.include?("I – vi – IV – V") || a.include?(":")}
-           a = b.map {|a| a + ")"}.select {|a| a.include?("Chord") || a.include?("chord")}
-           a.map! {|a| a.split(/chord/i)}
-           @major_chords << a.flatten.reject {|a| a.empty?}
+
+        if input == "g-flat"
+          a = "f-sharp"
         elsif input == "c-flat"
-           b_flat_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-b-flat.html"))
-           b = b_flat_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?(".") || a.include?("ii – V – I") || a.include?("I – vi – IV – V") || a.include?(":")}
-           a = b.map {|a| a + ")"}.select {|a| a.include?("Chord") || a.include?("chord")}
-           a.map! {|a| a.split(/chord/i)}
-           @major_chords << a.flatten.reject {|a| a.empty?}
-        elsif input == "e-flat"
-           e_flat_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-e-flat.html"))
-           e = e_flat_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?("Eb – Ab – Bb") || a.include?("#") || a.include?(".") || a.include?("ii – V – I") || a.include?("I – vi – IV – V")}
-           @major_chords << e.map {|a| a + ")"}.flatten
-        elsif input == "f-sharp"
-           f_sharp_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-f-sharp.html"))
-           f = f_sharp_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?(".") || a.include?("flat") || a.include?("ii – V – I") || a.include?("I – vi – IV – V")}
-           @major_chords << f.map {|a| a + ")"}.flatten
-        elsif input == "g-flat"
-           g_flat_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-f-sharp.html"))
-           g = g_flat_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?("#") || a.include?(".") || a.include?("sharp") || a.include?("Bmaj") || a.include?("ii – V – I") || a.include?("I – vi – IV – V")} 
-           @major_chords << g.map {|a| a + ")"}.flatten
-        elsif input == "c-sharp"
-           c_sharp_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-c-sharp.html"))
-           c = c_sharp_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?("#") || a.include?("ii – V – I") || a.include?("I – vi – IV – V")}
-           @major_chords << c.map {|a| a + ")"}.flatten
-        elsif input.include?("minor")
-           g_min = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-#{input}.html"))
-           g = g_min.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?(":") || a.include?(".") || a.include?("ii – v – i") || a.include?("i – VI – III – VII") || a.include?("i – iv – v") || a.include?("i – iv – VII") || a.include?("i – VI – VII")}
-           @minor_chords << g.map {|a| a + ")"}
+          a = "b"
         else
-           doc = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-#{input}.html"))
-           c = doc.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?("ii – V – I") || a.include?("I – vi – IV – V") || a.include?(".")}
-           @major_chords << c.map {|a| a + ")"}.flatten
-        end        
-       end 
+          a = input
+        end
+
+        a.include?("minor") ? b = @minor_chords : b = @major_chords
+
+        doc = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-#{a}.html"))
+        b << doc.at_css(".entry-content ul").text.split("\n").delete_if {|a| a == ""}.map! {|a| a.split(/chord/i)}.flatten.reject {|a| a.empty?}.map! {|a| a.lstrip}.flatten   
+       end
       end
      end
 
@@ -183,57 +162,23 @@ class PickAKey::Scraper
 
      def self.individual_chord_scraper
      
-         @user_input = gets.strip
-     
          if @user_input.include?("minor")
            @modified_user_input = @user_input.split(" ").join("-").downcase
+         elsif @user_input == "c flat major" || @user_input == "C Flat Major"
+            @modified_user_input = "b"
+         elsif @user_input == "g flat major" || @user_input == "G Flat Major"
+            @modified_user_input = "f-sharp"
          else
            a = @user_input.split(" ").join("-").downcase
            @modified_user_input = a.delete_suffix("-major")
          end
      
-        #  case @modified_user_input
-        #  when "b-flat" || "c-flat"
-        #    scrape_key("http://www.piano-keyboard-guide.com/key-of-b-flat.html")
-     
-             if @modified_user_input == "b-flat"
-                b_flat_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-b-flat.html"))
-                b = b_flat_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?(".") || a.include?("ii – V – I") || a.include?("I – vi – IV – V") || a.include?(":")}
-                a = b.map {|a| a + ")"}.select {|a| a.include?("Chord") || a.include?("chord")}
-                a.map! {|a| a.split(/chord/i)}
-                @user_input_chords = a.flatten.reject {|a| a.empty?}
-             elsif @modified_user_input == "c-flat"
-                b_flat_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-b-flat.html"))
-                b = b_flat_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?(".") || a.include?("ii – V – I") || a.include?("I – vi – IV – V") || a.include?(":")}
-                a = b.map {|a| a + ")"}.select {|a| a.include?("Chord") || a.include?("chord")}
-                a.map! {|a| a.split(/chord/i)}
-                @user_input_chords = a.flatten.reject {|a| a.empty?}
-             elsif @modified_user_input == "e-flat"
-                e_flat_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-e-flat.html"))
-                e = e_flat_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?("Eb – Ab – Bb") || a.include?("#") || a.include?(".") || a.include?("ii – V – I") || a.include?("I – vi – IV – V")}
-                @user_input_chords = e.map {|a| a + ")"}.flatten
-             elsif @modified_user_input == "f-sharp"
-                f_sharp_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-f-sharp.html"))
-                f = f_sharp_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?(".") || a.include?("flat") || a.include?("ii – V – I") || a.include?("I – vi – IV – V")}
-                @user_input_chords = f.map {|a| a + ")"}.flatten
-             elsif @modified_user_input == "g-flat"
-                g_flat_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-f-sharp.html"))
-                g = g_flat_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?("#") || a.include?(".") || a.include?("sharp") || a.include?("Bmaj") || a.include?("ii – V – I") || a.include?("I – vi – IV – V")} 
-                @user_input_chords = g.map {|a| a + ")"}.flatten
-             elsif @modified_user_input == "c-sharp"
-                c_sharp_maj = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-c-sharp.html"))
-                c = c_sharp_maj.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?("#") || a.include?("ii – V – I") || a.include?("I – vi – IV – V")}
-                @user_input_chords = c.map {|a| a + ")"}.flatten
-             elsif @modified_user_input.include?("minor")
-                g_min = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-#{@modified_user_input}.html"))
-                g = g_min.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?(":") || a.include?(".") || a.include?("ii – v – i") || a.include?("i – VI – III – VII") || a.include?("i – iv – v") || a.include?("i – iv – VII") || a.include?("i – VI – VII")}
-                @user_input_chords = g.map {|a| a + ")"}
-             else 
-                doc = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-#{@modified_user_input}.html"))
-                c = doc.css(".entry-content ul li").text.split(")").delete_if {|a| a.include?("Chord") || a.include?("ii – V – I") || a.include?("I – vi – IV – V") || a.include?(".")}
-                @user_input_chords = c.map {|a| a + ")"}.flatten
-             end        
-        @user_input_chords
-     end
-   end
+         doc = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-#{@modified_user_input}.html"))
+         if @user_input == "g flat major" || @user_input == "G Flat Major" then @user_input_chords=doc.css(".entry-content ul").children[14..28].text.split("\n").delete_if {|a| a == ""} end
+         @user_input_chords=doc.at_css(".entry-content ul").text.split("\n").delete_if {|a| a == ""}.map! {|a| a.split(/chord/i)}.flatten.reject {|a| a.empty?}.map! {|a| a.lstrip}.flatten
+    end
+end
+
+
+   binding.pry
 

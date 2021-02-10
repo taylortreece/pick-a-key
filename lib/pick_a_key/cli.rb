@@ -1,3 +1,6 @@
+require './lib/pick_a_key'
+
+
 class PickAKey::CLI
 
     def start
