@@ -17,6 +17,7 @@ class PickAKey::Key
             end
           end
         end
+        @name = name_modifier
         PickAKey::CLI.current_key = self
     end
 
@@ -38,7 +39,7 @@ class PickAKey::Key
         puts "relative Major:" else puts "relative minor:" end
         puts @relative_minor
       end
-      
+
     def generate_progression
         puts @chords[rand(6)]
     end
@@ -54,5 +55,19 @@ class PickAKey::Key
     #     @user_input = gets.strip
     #     PickAKey::Scraper.key_information_creator
     # end   
+
+    def name_modifier
+      if @name.to_s.include?("sharp")
+        a = @name.to_s.capitalize.split(" sharp")
+        b = a[0]+"♯"+a[1]
+        b.split(" ").map(&:capitalize).join(" ")
+      elsif @name.to_s.include?("flat")
+        a = @name.to_s.capitalize.split(" flat")
+        b = a[0]+"♭"+a[1]
+        b.split(" ").map(&:capitalize).join(" ")
+      else
+        @name = @name.to_s.capitalize
+      end
+    end
     
 end

@@ -30,11 +30,11 @@ class PickAKey::CLI
   end
 
   def self.current_key=(key)
-    @@all<<@current_key=key
+    @current_key=key
   end
 
   def self.current_key
-    @@all[@@all.length - 1]
+    @current_key
   end
 
   def self.menu
@@ -47,13 +47,15 @@ class PickAKey::CLI
     puts "To find this key's relative fifth, type 'relative fifth'" # Done.
     puts "To generate a random four chord progression in this key, type the number of chords you would like to get in your progression (e.g. '4')"
     puts "To get a random song generated in this key, type 'generate song'"
-    puts "To look up a new key, type 'new key' to review and choose from the list of keys."
-    puts "To see all keys at once, type 'all keys'"
+    puts "To look up a new key, type 'new key' to review and choose from the list of keys." #done
+    puts "To see all keys at once, type 'all keys'" #done
     puts "To exit, type 'exit'"
   end
 
   def self.commands
     user_input=gets.strip
+
+    #relative key
     if user_input.include?("or")
       PickAKey::CLI.switch="a"
       if PickAKey::CLI.current_key != nil
@@ -68,6 +70,7 @@ class PickAKey::CLI
         PickAKey::CLI.commands
       end
 
+    #relative fifth
     elsif user_input.include?("fifth")
       PickAKey::CLI.switch="b"
         if PickAKey::CLI.current_key != nil
@@ -81,7 +84,11 @@ class PickAKey::CLI
           PickAKey::CLI.menu
           PickAKey::CLI.commands
         end
+    #new key
+    elsif user_input == "new key"
+      PickAKey::CLI.new.start
 
+    #all keys
     elsif user_input == "all keys"
       puts " "
       puts "loading..."

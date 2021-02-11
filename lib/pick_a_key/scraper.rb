@@ -101,6 +101,14 @@ class PickAKey::Scraper
            #if gets.strip doesn't have correct input, send back to either start or menu.
         end
 
+        if @user_input.include?("♯")
+            @user_input["\u266F"] = " sharp"
+        elsif @user_input.include?(" ♭")
+            @user_input["\u266D"] = " flat"
+        else
+            @user_input
+        end
+
         if @user_input.include?("minor")
           @modified_user_input = @user_input.split(" ").join("-").downcase
         elsif @user_input == "c flat major" || @user_input == "C Flat Major"
@@ -136,14 +144,14 @@ class PickAKey::Scraper
                     # @major_chords[@keys_info["Major"].length][0]
         }
        end
-       @names[1].each do |name|          
-        @keys_info["minor"][:"#{name}"] = {
-            :notes => @notes[1][@keys_info["minor"].length],
-            :relative_fifth => @notes[1][@keys_info["minor"].length].split(" ")[8].downcase+" minor",
-            :relative_major => @notes[1][@keys_info["minor"].length].split(" ")[4]+" Major",
-            :chords => @minor_chords[@keys_info["minor"].length]
+        @names[1].each do |name|          
+         @keys_info["minor"][:"#{name}"] = {
+             :notes => @notes[1][@keys_info["minor"].length],
+             :relative_fifth => @notes[1][@keys_info["minor"].length].split(" ")[8].downcase+" minor",
+             :relative_major => @notes[1][@keys_info["minor"].length].split(" ")[4]+" Major",
+             :chords => @minor_chords[@keys_info["minor"].length]
         }
-        end
+       end
       @keys_info
     end
 
