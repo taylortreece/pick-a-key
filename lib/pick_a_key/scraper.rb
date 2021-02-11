@@ -53,6 +53,12 @@ class PickAKey::Scraper
         @names
     end
 
+    def self.all_scale_notes
+        @notes = []
+        @notes << self.scrape_major_key_notes
+        @notes << self.scrape_minor_key_notes
+    end
+
     def self.name_modifier
         self.all_scale_names
         @names[0].map! { |scale| scale.split(" ").join("-").downcase }
@@ -85,10 +91,29 @@ class PickAKey::Scraper
       end
      end
 
-    def self.all_scale_notes
-        @notes = []
-        @notes << self.scrape_major_key_notes
-        @notes << self.scrape_minor_key_notes
+    def self.individual_chord_scraper
+        if PickAKey::CLI.current_key != nil
+            @user_input = PickAKey::CLI.current_key.relative_minor.downcase
+        elsif @fifth==true
+            @user_input = PickAKey::CLI.current_key.relative_fifth.downcase
+        else
+           @user_input = gets.strip 
+        end
+
+        if @user_input.include?("minor")
+          @modified_user_input = @user_input.split(" ").join("-").downcase
+        elsif @user_input == "c flat major" || @user_input == "C Flat Major"
+           @modified_user_input = "b"
+        elsif @user_input == "g flat major" || @user_input == "G Flat Major"
+           @modified_user_input = "f-sharp"
+        else
+          a = @user_input.split(" ").join("-").downcase
+          @modified_user_input = a.delete_suffix("-major")
+        end
+    
+        doc = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-#{@modified_user_input}.html"))
+        if @user_input == "g flat major" || @user_input == "G Flat Major" then @user_input_chords=doc.css(".entry-content ul").children[14..28].text.split("\n").delete_if {|a| a == ""} end
+        @user_input_chords=doc.at_css(".entry-content ul").text.split("\n").delete_if {|a| a == ""}.map! {|a| a.split(/chord/i)}.flatten.reject {|a| a.empty?}.map! {|a| a.lstrip}.flatten
     end
 
     def self.create_hash_for_keys
@@ -121,18 +146,11 @@ class PickAKey::Scraper
       @keys_info
     end
 
-    #Individual Chord Scraper
-
     def self.key_information_creator
-
         self.individual_chord_scraper
-     
         self.all_scale_names
         self.all_scale_notes
-     
-     
         @user_input_name = @user_input
-     
         @user_key_info = {}
      
         if @user_input_name.include?("minor")
@@ -155,30 +173,10 @@ class PickAKey::Scraper
             :relative_minor => @notes[0][@user_key_info["Major"].length].split(" ")[10]+" minor",
             :chords => @user_input_chords
      }   
-       end
+         end
        @key = PickAKey::Key.new(@user_key_info)
-       puts @key.chords
+       PickAKey::CLI.current_key = @key
      end 
 
-     def self.individual_chord_scraper
-     
-         if @user_input.include?("minor")
-           @modified_user_input = @user_input.split(" ").join("-").downcase
-         elsif @user_input == "c flat major" || @user_input == "C Flat Major"
-            @modified_user_input = "b"
-         elsif @user_input == "g flat major" || @user_input == "G Flat Major"
-            @modified_user_input = "f-sharp"
-         else
-           a = @user_input.split(" ").join("-").downcase
-           @modified_user_input = a.delete_suffix("-major")
-         end
-     
-         doc = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-#{@modified_user_input}.html"))
-         if @user_input == "g flat major" || @user_input == "G Flat Major" then @user_input_chords=doc.css(".entry-content ul").children[14..28].text.split("\n").delete_if {|a| a == ""} end
-         @user_input_chords=doc.at_css(".entry-content ul").text.split("\n").delete_if {|a| a == ""}.map! {|a| a.split(/chord/i)}.flatten.reject {|a| a.empty?}.map! {|a| a.lstrip}.flatten
-    end
 end
-
-
-   binding.pry
 
