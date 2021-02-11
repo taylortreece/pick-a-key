@@ -46,7 +46,7 @@ class PickAKey::Scraper
         @minor_scale_names = []
         @major_scale_names << self.scrape_major_key_names
         @minor_scale_names << self.scrape_minor_key_names
-        @major_scale_names.map! {|a| a.split("Scale")}
+        @major_scale_names.map! {|a| a.split(" Scale")}
         @names << @major_scale_names.flatten!
         @minor_scale_names.map! {|a| a.split(" scale")}
         @names << @minor_scale_names.flatten!
@@ -166,17 +166,17 @@ class PickAKey::Scraper
         }
         else
          @user_key_info["Major"] = {}
-         user_notes_index = @major_scale_names.find_index(@user_input_name)
+         user_notes_index = @major_scale_names.find_index(@user_input_name.split(" ").map(&:capitalize).join(" "))
      
          @user_key_info["Major"][:"#{@user_input_name.capitalize}"] = {
             :notes => @notes[0][user_notes_index.to_i].lstrip,    
-            :relative_fifth => @notes[0][@user_key_info["Major"].length].split(" ")[8]+" Major",
-            :relative_minor => @notes[0][@user_key_info["Major"].length].split(" ")[10]+" minor",
+            :relative_fifth => @notes[0][user_notes_index.to_i].split(" ")[8]+" Major",
+            :relative_minor => @notes[0][user_notes_index.to_i].split(" ")[10]+" minor",
             :chords => @user_input_chords
      }   
-         end
+         end 
        @key = PickAKey::Key.new(@user_key_info)
-       PickAKey::CLI.current_key = @key
+       PickAKey::CLI.current_key = @key 
      end 
 
 end

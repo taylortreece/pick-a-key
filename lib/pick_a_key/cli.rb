@@ -43,10 +43,11 @@ class PickAKey::CLI
     puts "What would you like to do?"
     puts " "
     puts "____________________________________________________________________________"
-    puts "To find this key's relative Major/minor, type 'relative Major' or 'relative minor'" # not working: @user_input not saving as PickAKey::CLI.current_key.relative_minor.downcase in #individual_chord_scraper
-    puts "To find this key's relative fifth, type 'relative fifth'" 
+    puts "To find this key's relative Major/minor, type 'relative Major' or 'relative minor'" # Done.
+    puts "To find this key's relative fifth, type 'relative fifth'" # Done.
     puts "To generate a random four chord progression in this key, type the number of chords you would like to get in your progression (e.g. '4')"
     puts "To get a random song generated in this key, type 'generate song'"
+    puts "To look up a new key, type 'new key' to review and choose from the list of keys."
     puts "To see all keys at once, type 'all keys'"
     puts "To exit, type 'exit'"
   end

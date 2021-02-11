@@ -34,11 +34,11 @@ class PickAKey::Key
       puts "relative_fifth:"
       puts @relative_fifth
       puts " "
-      if @relative_minor == true
-        puts "relative minor:" else puts "relative Major:" end
-      puts @relative_minor
-    end
-
+      if @relative_minor.include?("Major")
+        puts "relative Major:" else puts "relative minor:" end
+        puts @relative_minor
+      end
+      
     def generate_progression
         puts @chords[rand(6)]
     end
