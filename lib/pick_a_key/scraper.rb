@@ -92,12 +92,13 @@ class PickAKey::Scraper
      end
 
     def self.individual_chord_scraper
-        if PickAKey::CLI.current_key != nil
+        if PickAKey::CLI.current_key != nil && PickAKey::CLI.switch=="a"
             @user_input = PickAKey::CLI.current_key.relative_minor.downcase
-        elsif @fifth==true
+        elsif PickAKey::CLI.current_key != nil && PickAKey::CLI.switch=="b"
             @user_input = PickAKey::CLI.current_key.relative_fifth.downcase
         else
            @user_input = gets.strip 
+           #if gets.strip doesn't have correct input, send back to either start or menu.
         end
 
         if @user_input.include?("minor")

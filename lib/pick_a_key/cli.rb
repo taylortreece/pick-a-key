@@ -52,9 +52,9 @@ class PickAKey::CLI
   end
 
   def self.commands
-    user_input = gets.strip
-
+    user_input=gets.strip
     if user_input.include?("or")
+      PickAKey::CLI.switch="a"
       if PickAKey::CLI.current_key != nil
       PickAKey::Scraper.key_information_creator
       puts PickAKey::CLI.current_key.information
@@ -67,7 +67,8 @@ class PickAKey::CLI
         PickAKey::CLI.commands
       end
 
-    elsif user_input.include?("relative fifth")
+    elsif user_input.include?("fifth")
+      PickAKey::CLI.switch="b"
         if PickAKey::CLI.current_key != nil
         PickAKey::Scraper.key_information_creator
         puts PickAKey::CLI.current_key.information
@@ -89,6 +90,14 @@ class PickAKey::CLI
       PickAKey::CLI.commands
     end
 
+  end
+
+  def self.switch=(letter)
+    @switch=letter
+  end
+
+  def self.switch
+    @switch
   end
 
 end
