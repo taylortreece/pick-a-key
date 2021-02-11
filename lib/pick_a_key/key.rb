@@ -40,21 +40,45 @@ class PickAKey::Key
         puts @relative_minor
       end
 
-    def generate_progression
-        puts @chords[rand(6)]
-    end
+    def chord_progression
+      @progression = []
+      i=0
 
-    # def self.create_new_key
-    #     puts "Enter the name of the key you like to see:"
-    #     puts " "
-    #     puts "Major:"
-    #     PickAKey::Scraper.all_scale_names[0]
-    #     puts " "
-    #     puts "minor:"
-    #     PickAKey::Scraper.all_scale_names[1]
-    #     @user_input = gets.strip
-    #     PickAKey::Scraper.key_information_creator
-    # end   
+      if PickAKey::CLI.switch == nil then PickAKey::CLI.switch=4 end
+
+      if @type.include?("ajor")
+        while i < PickAKey::CLI.switch
+        @progression << @chords[rand(6)]
+        i += 1
+        end
+      else
+        while i < PickAKey::CLI.switch
+        puts @chords.delete_if {|a| a.include?("dim")}[rand(6)]
+        i += 1
+        end
+    end
+    @progression
+  end
+
+    def song
+
+      puts " "
+      puts "1st Chorus:"
+      puts @chorus = chord_progression
+      puts "1st Verse:"
+      puts @verse = chord_progression
+      puts "2nd Chorus:"
+      puts @chorus
+      puts "2nd verse:"
+      puts @verse
+      puts "Bridge:"
+      puts @bridge = chord_progression
+      puts "3rd Chorus:"
+      puts @chorus
+      puts " "
+      puts "end"
+
+    end
 
     def name_modifier
       if @name.to_s.include?("sharp")

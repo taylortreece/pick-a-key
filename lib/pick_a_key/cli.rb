@@ -43,20 +43,20 @@ class PickAKey::CLI
     puts "What would you like to do?"
     puts " "
     puts "____________________________________________________________________________"
-    puts "To find this key's relative Major/minor, type 'relative Major' or 'relative minor'" # Done.
-    puts "To find this key's relative fifth, type 'relative fifth'" # Done.
-    puts "To generate a random four chord progression in this key, type the number of chords you would like to get in your progression (e.g. '4')"
-    puts "To get a random song generated in this key, type 'generate song'"
-    puts "To look up a new key, type 'new key' to review and choose from the list of keys." #done
-    puts "To see all keys at once, type 'all keys'" #done
-    puts "To exit, type 'exit'"
+    puts "To find this key's relative Major/minor, type 'Major' or 'minor'" # Done.
+    puts "To find this key's relative fifth, type 'fifth'" #Done.
+    puts "To generate a random chord progression in this key, type 'chord'" #Done.
+    puts "To get a random song generated in this key, type 'song'" #Done.
+    puts "To look up a new key, type 'new' to review and choose from the list of keys." #Done.
+    puts "To see all keys at once, type 'all'" #Done.
+    puts "To exit, type 'exit'" #Done.
   end
 
   def self.commands
     user_input=gets.strip
 
     #relative key
-    if user_input.include?("or")
+    if user_input.include?("m") || user_input.include?("M")
       PickAKey::CLI.switch="a"
       if PickAKey::CLI.current_key != nil
       PickAKey::Scraper.key_information_creator
@@ -71,7 +71,7 @@ class PickAKey::CLI
       end
 
     #relative fifth
-    elsif user_input.include?("fifth")
+    elsif user_input == "fifth"
       PickAKey::CLI.switch="b"
         if PickAKey::CLI.current_key != nil
         PickAKey::Scraper.key_information_creator
@@ -84,24 +84,47 @@ class PickAKey::CLI
           PickAKey::CLI.menu
           PickAKey::CLI.commands
         end
+
+    #chord progression
+    elsif user_input.include?("ch")
+      puts " "
+      puts "Enter the number of chords you would like your progression to be (e.g. 4)"
+      PickAKey::CLI.switch=gets.chomp.to_i
+      puts "Random #{PickAKey::CLI.switch} chord progression written in #{PickAKey::CLI.current_key.name}"
+      puts " "
+      puts PickAKey::CLI.current_key.chord_progression
+      PickAKey::CLI.menu
+      PickAKey::CLI.commands
+
+    #song creation
+    elsif user_input.include?("so")
+      puts " "
+      puts "Generating your masterpiece in #{PickAKey::CLI.current_key.name}. Hold your horses Beethoven..."
+      PickAKey::CLI.current_key.song
+      PickAKey::CLI.menu
+      PickAKey::CLI.commands
+
     #new key
-    elsif user_input == "new key"
+    elsif user_input.include?("ne")
       PickAKey::CLI.new.start
 
     #all keys
-    elsif user_input == "all keys"
+    elsif user_input.include?("al")
       puts " "
       puts "loading..."
       puts " "
       pp PickAKey::Scraper.create_hash_for_keys
       PickAKey::CLI.menu
       PickAKey::CLI.commands
+
+    elsif user_input.include?("ex")
+      puts "See you soon."
     end
 
   end
 
-  def self.switch=(letter)
-    @switch=letter
+  def self.switch=(value)
+    @switch=value
   end
 
   def self.switch
