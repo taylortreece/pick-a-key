@@ -39,7 +39,7 @@ class PickAKey::Scraper
 
 
     # Hash creation
-
+   # @major_scale_names.map {|a| a.gsub(" Scale", "") }
     def self.all_scale_names
         @names = []
         @major_scale_names = []
@@ -97,29 +97,35 @@ class PickAKey::Scraper
         elsif PickAKey::CLI.current_key != nil && PickAKey::CLI.switch=="b"
             @user_input = PickAKey::CLI.current_key.relative_fifth.downcase
         else
-           @user_input = gets.strip 
-           #if gets.strip doesn't have correct input, send back to either start or menu.
+           @user_input = gets.strip.capitalize
         end
 
         if @user_input.include?("♯")
-            @user_input["\u266F"] = " sharp"
-        elsif @user_input.include?(" ♭")
-            @user_input["\u266D"] = " flat"
+            @user_input["\u266F"] = " Sharp"
+        elsif @user_input.include?("♭")
+            @user_input["\u266D"] = " Flat" 
         else
             @user_input
         end
+        
+        if @user_input == "c flat major" || @user_input == "C Flat Major"
+           @modified_user_input = "b"
+        elsif @user_input == "g flat major" || @user_input == "G Flat Major"            
+           @modified_user_input = "f-sharp"
+        elsif @user_input == "g sharp major" || @user_input == "g Sharp major" || @user_input == "G Sharp Major"
+            @user_input = "A Flat Major"
+            @modified_user_input = "a-flat"
+        elsif @user_input.downcase == "e sharp minor"
+            @user_input = "f minor"
+        end
 
         if @user_input.include?("minor")
-          @modified_user_input = @user_input.split(" ").join("-").downcase
-        elsif @user_input == "c flat major" || @user_input == "C Flat Major"
-           @modified_user_input = "b"
-        elsif @user_input == "g flat major" || @user_input == "G Flat Major"
-           @modified_user_input = "f-sharp"
+            @modified_user_input = @user_input.split(" ").join("-").downcase
         else
           a = @user_input.split(" ").join("-").downcase
           @modified_user_input = a.delete_suffix("-major")
         end
-    
+
         doc = Nokogiri::HTML(open("http://www.piano-keyboard-guide.com/key-of-#{@modified_user_input}.html"))
         if @user_input == "g flat major" || @user_input == "G Flat Major" then @user_input_chords=doc.css(".entry-content ul").children[14..28].text.split("\n").delete_if {|a| a == ""} end
         @user_input_chords=doc.at_css(".entry-content ul").text.split("\n").delete_if {|a| a == ""}.map! {|a| a.split(/chord/i)}.flatten.reject {|a| a.empty?}.map! {|a| a.lstrip}.flatten
@@ -164,7 +170,7 @@ class PickAKey::Scraper
      
         if @user_input_name.include?("minor")
          @user_key_info["minor"] = {}
-         user_notes_index = @minor_scale_names.find_index(@user_input_name)
+         user_notes_index = @minor_scale_names.find_index(@user_input_name.downcase).to_i
      
          @user_key_info["minor"][:"#{@user_input_name}"] = {
             :notes => @notes[1][user_notes_index].lstrip,    
@@ -172,6 +178,7 @@ class PickAKey::Scraper
             :relative_minor => @notes[1][user_notes_index].split(" ")[4]+" Major",
             :chords => @user_input_chords
         }
+
         else
          @user_key_info["Major"] = {}
          user_notes_index = @major_scale_names.find_index(@user_input_name.split(" ").map(&:capitalize).join(" "))

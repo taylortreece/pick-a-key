@@ -29,14 +29,17 @@ class PickAKey::Key
       puts "notes:"
       puts @notes
       puts " "
-      puts "chords:" 
+      puts "chords:"
       puts @chords
       puts " "
       puts "relative_fifth:"
       puts @relative_fifth
       puts " "
       if @relative_minor.include?("Major")
-        puts "relative Major:" else puts "relative minor:" end
+        puts "relative Major:" 
+      else 
+        puts "relative minor:" 
+      end
         puts @relative_minor
       end
 
@@ -53,7 +56,7 @@ class PickAKey::Key
         end
       else
         while i < PickAKey::CLI.switch
-        puts @chords.delete_if {|a| a.include?("dim")}[rand(6)]
+        @progression << @chords.delete_if {|a| a.include?("dim")}[rand(6)]
         i += 1
         end
     end
@@ -61,7 +64,6 @@ class PickAKey::Key
   end
 
     def song
-
       puts " "
       puts "1st Chorus:"
       puts @chorus = chord_progression
@@ -76,8 +78,7 @@ class PickAKey::Key
       puts "3rd Chorus:"
       puts @chorus
       puts " "
-      puts "end"
-
+      puts "End. Don't tell people I'm giving out free songs..."
     end
 
     def name_modifier

@@ -40,10 +40,9 @@ class PickAKey::CLI
   def self.menu
     puts "________________________________________"
     puts " "
-    puts "What would you like to do?"
-    puts " "
+    puts "What would you like to do?\n"
     puts "____________________________________________________________________________"
-    puts "To find this key's relative Major/minor, type 'Major' or 'minor'" # Done.
+    puts "To find this key's relative Major/minor, type 'Major' or 'minor" # Done.
     puts "To find this key's relative fifth, type 'fifth'" #Done.
     puts "To generate a random chord progression in this key, type 'chord'" #Done.
     puts "To get a random song generated in this key, type 'song'" #Done.
@@ -61,6 +60,7 @@ class PickAKey::CLI
       if PickAKey::CLI.current_key != nil
       PickAKey::Scraper.key_information_creator
       puts PickAKey::CLI.current_key.information
+      PickAKey::CLI.switch=nil
       PickAKey::CLI.menu
       PickAKey::CLI.commands
       else
@@ -71,18 +71,21 @@ class PickAKey::CLI
       end
 
     #relative fifth
-    elsif user_input == "fifth"
+    elsif user_input.include?("fi")
       PickAKey::CLI.switch="b"
         if PickAKey::CLI.current_key != nil
         PickAKey::Scraper.key_information_creator
+        PickAKey::CLI.switch=nil
         puts PickAKey::CLI.current_key.information
         PickAKey::CLI.menu
         PickAKey::CLI.commands
         else
+          
           puts " "
           puts "**You are not currently viewing an individual key. Please choose a valid selection**"
           PickAKey::CLI.menu
           PickAKey::CLI.commands
+          PickAKey::CLI.switch=nil
         end
 
     #chord progression
@@ -95,14 +98,16 @@ class PickAKey::CLI
       puts PickAKey::CLI.current_key.chord_progression
       PickAKey::CLI.menu
       PickAKey::CLI.commands
+      PickAKey::CLI.switch=nil
 
     #song creation
     elsif user_input.include?("so")
       puts " "
-      puts "Generating your masterpiece in #{PickAKey::CLI.current_key.name}. Hold your horses Beethoven..."
+      puts "Generating your masterpiece in #{PickAKey::CLI.current_key.name}."
       PickAKey::CLI.current_key.song
       PickAKey::CLI.menu
       PickAKey::CLI.commands
+      PickAKey::CLI.switch=nil
 
     #new key
     elsif user_input.include?("ne")
@@ -116,6 +121,7 @@ class PickAKey::CLI
       pp PickAKey::Scraper.create_hash_for_keys
       PickAKey::CLI.menu
       PickAKey::CLI.commands
+      PickAKey::CLI.switch=nil
 
     elsif user_input.include?("ex")
       puts "See you soon."
