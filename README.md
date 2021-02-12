@@ -49,3 +49,6 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/pick_a_key.
+
+## License
+https://github.com/taylortreece/pick-a-key/blob/main/LICENSE
