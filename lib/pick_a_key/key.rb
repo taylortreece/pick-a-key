@@ -21,66 +21,6 @@ class PickAKey::Key
         PickAKey::CLI.current_key = self
     end
 
-    def information
-      puts " "
-      puts "Key:"
-      puts @name
-      puts " "
-      puts "notes:"
-      puts @notes
-      puts " "
-      puts "chords:"
-      puts @chords
-      puts " "
-      puts "relative_fifth:"
-      puts @relative_fifth
-      puts " "
-      if @relative_minor.include?("Major")
-        puts "relative Major:" 
-      else 
-        puts "relative minor:" 
-      end
-        puts @relative_minor
-      end
-
-    def chord_progression(user_input=nil)
-      @progression = []
-      i=0
-
-      if user_input == nil then user_input=4 end
-
-      if @type.include?("ajor")
-        while i < user_input
-        @progression << @chords[rand(6)]
-        i += 1
-        end
-      else
-        while i < user_input
-        @progression << @chords.delete_if {|a| a.include?("dim")}[rand(6)]
-        i += 1
-        end
-    end
-    @progression
-  end
-
-    def song
-      puts " "
-      puts "1st Chorus:"
-      puts @chorus = chord_progression
-      puts "1st Verse:"
-      puts @verse = chord_progression
-      puts "2nd Chorus:"
-      puts @chorus
-      puts "2nd verse:"
-      puts @verse
-      puts "Bridge:"
-      puts @bridge = chord_progression
-      puts "3rd Chorus:"
-      puts @chorus
-      puts " "
-      puts "End. Don't tell people I'm giving out free songs..."
-    end
-
     def name_modifier
       if @name.to_s.include?("sharp")
         a = @name.to_s.capitalize.split(" sharp")

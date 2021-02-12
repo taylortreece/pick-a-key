@@ -4,8 +4,6 @@ require 'pp'
 
 class PickAKey::CLI
 
-  @@all = []
-
     def start
          puts "Welcome to your basic music theory coordinator!"
          puts ""
@@ -23,7 +21,7 @@ class PickAKey::CLI
          puts " "
          puts "loading ..."
          puts " "
-         puts PickAKey::CLI.current_key.information
+         puts PickAKey::CLI.current_key_information
               PickAKey::CLI.menu
               PickAKey::CLI.commands
 
@@ -61,7 +59,7 @@ class PickAKey::CLI
     PickAKey::CLI.generate_chord_progression
    #song creation
    elsif user_input.include?("so")
-     PickAKey::CLI.song_creation 
+     PickAKey::CLI.song_output
    #new key
    elsif user_input.include?("ne")
      PickAKey::CLI.new.start 
@@ -88,12 +86,12 @@ class PickAKey::CLI
     end
   end
 
-    def self.relative_key(switch)
+  def self.relative_key(switch)
     if PickAKey::CLI.current_key != nil
-    PickAKey::Scraper.key_information_creator(switch)
-    puts PickAKey::CLI.current_key.information
-    PickAKey::CLI.menu
-    PickAKey::CLI.commands
+      PickAKey::Scraper.key_information_creator(switch)
+      puts PickAKey::CLI.current_key_information
+      PickAKey::CLI.menu
+      PickAKey::CLI.commands
     else
       puts " "
       puts "**You are not currently viewing an individual key. Please choose a valid selection**"
@@ -110,17 +108,17 @@ class PickAKey::CLI
     user_input=gets.chomp.to_i
     puts "Random #{user_input} chord progression written in #{PickAKey::CLI.current_key.name}"
     puts " "
-    puts PickAKey::CLI.current_key.chord_progression(user_input)
+    puts PickAKey::CLI.chord_progression(user_input)
     PickAKey::CLI.menu
     PickAKey::CLI.commands
   end
 
   #"To get a random song generated in this key, type 'song'" #Done.
 
-  def self.song_creation
+  def self.song_output
     puts " "
-    puts "Generating your masterpiece in #{PickAKey::CLI.current_key.name}."
-    PickAKey::CLI.current_key.song
+    puts "Generating your masterpiece in #{@current_key.name}."
+    PickAKey::CLI.song_creation
     PickAKey::CLI.menu
     PickAKey::CLI.commands
   end
@@ -132,6 +130,68 @@ class PickAKey::CLI
     pp PickAKey::Scraper.create_hash_for_keys
     PickAKey::CLI.menu
     PickAKey::CLI.commands
+  end
+
+  #   **TRANSFERING KEY METHODS TO CLI**
+
+  def self.current_key_information
+    puts " "
+    puts "Key:"
+    puts @current_key.name
+    puts " "
+    puts "notes:"
+    puts @current_key.notes
+    puts " "
+    puts "chords:"
+    puts @current_key.chords
+    puts " "
+    puts "relative_fifth:"
+    puts @current_key.relative_fifth
+    puts " "
+    if @current_key.relative_minor.include?("Major")
+      puts "relative Major:" 
+    else 
+      puts "relative minor:" 
+    end
+      puts @current_key.relative_minor
+    end
+
+    def self.chord_progression(user_input=nil)
+      @progression = []
+      i=0
+
+      if user_input == nil then user_input=4 end
+
+      if @current_key.type.include?("ajor")
+        while i < user_input
+        @progression << @current_key.chords[rand(6)]
+        i += 1
+        end
+      else
+        while i < user_input
+        @progression << @current_key.chords.delete_if {|a| a.include?("dim")}[rand(6)]
+        i += 1
+        end
+    end
+    @progression
+  end
+
+  def self.song_creation
+    puts " "
+    puts "1st Chorus:"
+    puts @chorus = PickAKey::CLI.chord_progression
+    puts "1st Verse:"
+    puts @verse = PickAKey::CLI.chord_progression
+    puts "2nd Chorus:"
+    puts @chorus
+    puts "2nd verse:"
+    puts @verse
+    puts "Bridge:"
+    puts @bridge = PickAKey::CLI.chord_progression
+    puts "3rd Chorus:"
+    puts @chorus
+    puts " "
+    puts "End. Don't tell people I'm giving out free songs..."
   end
 
 end
