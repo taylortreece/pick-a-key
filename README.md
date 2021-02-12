@@ -6,7 +6,7 @@ Hello there, future rock star/Mozart. If you are using a Ruby Gem to incorporate
     -The notes within the Major or minor scale of the key(depening on if you chose a Major or minor key)
     -The standard chords within that key in order of their scale degree (along with alternate chords you could play in their place.
     -The key's relative major and minor.
- 
+```
     
 Below that list of attributes, a menu will pop up and give you ways to interact with the key you have chosen. The menu is listed as follows:
 
