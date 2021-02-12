@@ -43,19 +43,19 @@ class PickAKey::Key
         puts @relative_minor
       end
 
-    def chord_progression
+    def chord_progression(user_input=nil)
       @progression = []
       i=0
 
-      if PickAKey::CLI.switch == nil then PickAKey::CLI.switch=4 end
+      if user_input == nil then user_input=4 end
 
       if @type.include?("ajor")
-        while i < PickAKey::CLI.switch
+        while i < user_input
         @progression << @chords[rand(6)]
         i += 1
         end
       else
-        while i < PickAKey::CLI.switch
+        while i < user_input
         @progression << @chords.delete_if {|a| a.include?("dim")}[rand(6)]
         i += 1
         end

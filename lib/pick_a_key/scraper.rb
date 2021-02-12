@@ -91,11 +91,12 @@ class PickAKey::Scraper
       end
      end
 
-    def self.individual_chord_scraper
-        if PickAKey::CLI.current_key != nil && PickAKey::CLI.switch=="a"
+    def self.individual_chord_scraper(switch=nil)
+        if PickAKey::CLI.current_key != nil && switch=="a"
             @user_input = PickAKey::CLI.current_key.relative_minor.downcase
-        elsif PickAKey::CLI.current_key != nil && PickAKey::CLI.switch=="b"
+        elsif PickAKey::CLI.current_key != nil && switch=="b"
             @user_input = PickAKey::CLI.current_key.relative_fifth.downcase
+            puts "see you soon."
         else
            @user_input = gets.strip.capitalize
         end
@@ -117,6 +118,9 @@ class PickAKey::Scraper
             @modified_user_input = "a-flat"
         elsif @user_input.downcase == "e sharp minor"
             @user_input = "f minor"
+        elsif @user_input.downcase.include?("ex")
+            puts "see you soon." 
+            exit
         end
 
         if @user_input.include?("minor")
@@ -161,8 +165,8 @@ class PickAKey::Scraper
       @keys_info
     end
 
-    def self.key_information_creator
-        self.individual_chord_scraper
+    def self.key_information_creator(switch=nil)
+        self.individual_chord_scraper(switch)
         self.all_scale_names
         self.all_scale_notes
         @user_input_name = @user_input
