@@ -6,21 +6,21 @@ class PickAKey::CLI
 
     def start
          puts "Welcome to your basic music theory coordinator!"
-         puts ""
+         puts 
          puts "If you want to check out a key, choose from the list below by typing the key as you see it listed."
-         puts ""
+         puts 
          puts "Pick a key:"
-         puts " "
+         puts 
          puts "Major:"
          puts PickAKey::Scraper.all_scale_names[0]
-         puts " "
+         puts 
          puts "Minor:"
          puts PickAKey::Scraper.all_scale_names[1]
      
               PickAKey::Scraper.key_information_creator
-         puts " "
+         puts 
          puts "loading ..."
-         puts " "
+         puts 
          puts PickAKey::CLI.current_key_information
               PickAKey::CLI.menu
               PickAKey::CLI.commands
@@ -37,7 +37,7 @@ class PickAKey::CLI
 
   def self.menu
     puts "________________________________________"
-    puts " "
+    puts 
     puts "What would you like to do?\n"
     puts "____________________________________________________________________________"
     puts "To find this key's relative Major/minor, type 'Major' or 'minor" # Done.
@@ -66,8 +66,44 @@ class PickAKey::CLI
    #all keys
    elsif user_input.include?("al")
      PickAKey::CLI.list_all_keys 
+   #exit
    elsif user_input.include?("ex")
       puts "See you soon."
+    end
+  end
+
+  #INFORMATION OUTPUT METHODS
+
+  def self.current_key_information
+    puts 
+    puts "Key:"
+    puts @current_key.name
+    puts 
+    puts "notes:"
+    puts @current_key.notes
+    puts 
+    puts "chords:"
+    puts @current_key.chords
+    puts 
+    puts "Popular Chord Progressions:"
+    pp @current_key.popular_chord_progressions
+    puts
+    puts "relative_fifth:"
+    puts @current_key.relative_fifth
+    puts 
+    if @current_key.relative_minor.include?("Major")
+      puts "relative Major:" 
+    else 
+      puts "relative minor:" 
+    end
+      puts @current_key.relative_minor
+    end
+
+  def self.popular_chord_progressions_pp
+    @current_key.popular_chord_progressions.each_pair do |k, v|
+      puts k
+      pp v
+      binding.pry
     end
   end
 
@@ -93,7 +129,7 @@ class PickAKey::CLI
       PickAKey::CLI.menu
       PickAKey::CLI.commands
     else
-      puts " "
+      puts 
       puts "**You are not currently viewing an individual key. Please choose a valid selection**"
       PickAKey::CLI.menu
       PickAKey::CLI.commands
@@ -102,12 +138,32 @@ class PickAKey::CLI
 
   #"To generate a random chord progression in this key, type 'chord'" #Done.
 
+  def self.chord_progression(user_input=nil)
+    @progression = []
+    i=0
+
+    if user_input == nil then user_input=4 end
+
+    if @current_key.type.include?("ajor")
+      while i < user_input
+      @progression << @current_key.chords[rand(6)]
+      i += 1
+      end
+    else
+      while i < user_input
+      @progression << @current_key.chords.delete_if {|a| a.include?("dim")}[rand(6)]
+      i += 1
+      end
+    end
+    @progression
+  end
+
   def self.generate_chord_progression
-    puts " "
+    puts 
     puts "Enter the number of chords you would like your progression to be (e.g. 4)"
     user_input=gets.chomp.to_i
     puts "Random #{user_input} chord progression written in #{PickAKey::CLI.current_key.name}"
-    puts " "
+    puts 
     puts PickAKey::CLI.chord_progression(user_input)
     PickAKey::CLI.menu
     PickAKey::CLI.commands
@@ -115,69 +171,8 @@ class PickAKey::CLI
 
   #"To get a random song generated in this key, type 'song'" #Done.
 
-  def self.song_output
-    puts " "
-    puts "Generating your masterpiece in #{@current_key.name}."
-    PickAKey::CLI.song_creation
-    PickAKey::CLI.menu
-    PickAKey::CLI.commands
-  end
-
-  def self.list_all_keys
-    puts " "
-    puts "loading..."
-    puts " "
-    pp PickAKey::Scraper.create_hash_for_keys
-    PickAKey::CLI.menu
-    PickAKey::CLI.commands
-  end
-
-  #   **TRANSFERING KEY METHODS TO CLI**
-
-  def self.current_key_information
-    puts " "
-    puts "Key:"
-    puts @current_key.name
-    puts " "
-    puts "notes:"
-    puts @current_key.notes
-    puts " "
-    puts "chords:"
-    puts @current_key.chords
-    puts " "
-    puts "relative_fifth:"
-    puts @current_key.relative_fifth
-    puts " "
-    if @current_key.relative_minor.include?("Major")
-      puts "relative Major:" 
-    else 
-      puts "relative minor:" 
-    end
-      puts @current_key.relative_minor
-    end
-
-    def self.chord_progression(user_input=nil)
-      @progression = []
-      i=0
-
-      if user_input == nil then user_input=4 end
-
-      if @current_key.type.include?("ajor")
-        while i < user_input
-        @progression << @current_key.chords[rand(6)]
-        i += 1
-        end
-      else
-        while i < user_input
-        @progression << @current_key.chords.delete_if {|a| a.include?("dim")}[rand(6)]
-        i += 1
-        end
-    end
-    @progression
-  end
-
   def self.song_creation
-    puts " "
+    puts 
     puts "1st Chorus:"
     puts @chorus = PickAKey::CLI.chord_progression
     puts "1st Verse:"
@@ -190,8 +185,27 @@ class PickAKey::CLI
     puts @bridge = PickAKey::CLI.chord_progression
     puts "3rd Chorus:"
     puts @chorus
-    puts " "
+    puts 
     puts "End. Don't tell people I'm giving out free songs..."
+  end
+
+  def self.song_output
+    puts 
+    puts "Generating your masterpiece in #{@current_key.name}."
+    PickAKey::CLI.song_creation
+    PickAKey::CLI.menu
+    PickAKey::CLI.commands
+  end
+
+  #"To see all keys at once, type 'all'" #Done.
+
+  def self.list_all_keys
+    puts 
+    puts "loading..."
+    puts 
+    pp PickAKey::Scraper.create_hash_for_keys
+    PickAKey::CLI.menu
+    PickAKey::CLI.commands
   end
 
 end
