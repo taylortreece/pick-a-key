@@ -216,7 +216,7 @@ class PickAKey::Scraper
         else
           c = input
         end
-        c
+          c
     end
 
 end

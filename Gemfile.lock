@@ -3,6 +3,7 @@ PATH
   specs:
     pick_a_key (0.1.0)
       nokogiri
+      prettyprint
 
 GEM
   remote: https://rubygems.org/
@@ -11,6 +12,7 @@ GEM
     method_source (1.0.0)
     nokogiri (1.11.1-x86_64-linux)
       racc (~> 1.4)
+    prettyprint (0.1.0)
     pry (0.14.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
