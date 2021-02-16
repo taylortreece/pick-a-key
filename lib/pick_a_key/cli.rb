@@ -173,13 +173,13 @@ class PickAKey::CLI
 
   def self.song_creation
     puts 
-    puts "1st Chorus:"
-    puts @chorus = PickAKey::CLI.chord_progression
     puts "1st Verse:"
+    puts @chorus = PickAKey::CLI.chord_progression
+    puts "1st Chorus:"
     puts @verse = PickAKey::CLI.chord_progression
-    puts "2nd Chorus:"
+    puts "2nd Verse:"
     puts @chorus
-    puts "2nd verse:"
+    puts "2nd Chorus:"
     puts @verse
     puts "Bridge:"
     puts @bridge = PickAKey::CLI.chord_progression
