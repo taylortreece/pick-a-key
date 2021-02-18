@@ -68,6 +68,7 @@ class PickAKey::Scraper
         @names           
     end
 
+    #chord scrapers
 
     def self.all_chords_scraper
         self.name_modifier
@@ -97,6 +98,8 @@ class PickAKey::Scraper
         @user_input_chords=doc.at_css(".entry-content ul").text.split("\n").delete_if {|a| a == ""}.map! {|a| a.split(/chord/i)}.flatten.reject {|a| a.empty?}.map! {|a| a.lstrip}.flatten
     end
 
+    #hash and object creators
+    
     def self.create_hash_for_keys
         self.all_scale_names
         self.all_scale_notes
@@ -112,9 +115,7 @@ class PickAKey::Scraper
                 :notes => @notes[0][@keys_info["Major"].length].lstrip,    
                 :relative_fifth => @notes[0][@keys_info["Major"].length].split(" ")[8]+" Major",
                 :relative_minor => @notes[0][@keys_info["Major"].length].split(" ")[10].downcase+" minor",
-                :chords => @major_chords[@keys_info["Major"].length],
-              # :popular_chord_progressions => 
-                    # @major_chords[@keys_info["Major"].length][0]
+                :chords => @major_chords[@keys_info["Major"].length]
         }
        end
         @names[1].each do |name|          
@@ -157,8 +158,10 @@ class PickAKey::Scraper
             :chords => @user_input_chords
      }   
          end 
+       @user_input = nil
        @key = PickAKey::Key.new(@user_key_info)
        PickAKey::CLI.current_key = @key 
+       @user_input = nil
      end 
 
      #individual chord scraper helper methods

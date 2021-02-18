@@ -19,8 +19,6 @@ class PickAKey::CLI
      
               PickAKey::Scraper.key_information_creator
          puts 
-         puts "loading ..."
-         puts 
          puts PickAKey::CLI.current_key_information
               PickAKey::CLI.menu
               PickAKey::CLI.commands
@@ -172,20 +170,32 @@ class PickAKey::CLI
   #"To get a random song generated in this key, type 'song'" #Done.
 
   def self.song_creation
+    verse = PickAKey::CLI.chord_progression
     puts 
-    puts "1st Verse:"
-    puts @chorus = PickAKey::CLI.chord_progression
-    puts "1st Chorus:"
-    puts @verse = PickAKey::CLI.chord_progression
-    puts "2nd Verse:"
-    puts @chorus
-    puts "2nd Chorus:"
-    puts @verse
-    puts "Bridge:"
-    puts @bridge = PickAKey::CLI.chord_progression
-    puts "3rd Chorus:"
-    puts @chorus
-    puts 
+    puts "Intro:"
+    puts intro = verse
+    puts ""
+    puts "1st Verse (insert lyrics):"
+    puts verse
+    puts ""
+    puts "1st Chorus (insert chorus lyrics):"
+    puts chorus = PickAKey::CLI.chord_progression
+    puts ""
+    puts "2nd Verse (insert lyrics):"
+    puts verse
+    puts ""
+    puts "2nd Chorus (repeat chorus lyrics):"
+    puts chorus
+    puts ""
+    puts "Bridge (insert lyrics):"
+    puts bridge = PickAKey::CLI.chord_progression
+    puts ""
+    puts "3rd Chorus (repeat chorus lyrics):"
+    puts chorus
+    puts ""
+    puts "Outro:"
+    puts chorus
+    puts ""
     puts "End. Don't tell people I'm giving out free songs..."
   end
 
